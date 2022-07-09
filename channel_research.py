@@ -1,6 +1,6 @@
 import pandas as pd
 from googleapiclient.discovery import build #pip install command --> pip install google-api-python-client
-from ops import api_key
+from ops import api_key # Get your API key -->  https://console.cloud.google.com/apis/library/youtube.googleapis.com
 
 
 # Main service to which other parameters are appendended e.g: which other specs should go on the api call
