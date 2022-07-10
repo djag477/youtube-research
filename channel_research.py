@@ -61,7 +61,24 @@ df_cd = pd.merge(df, video_details_df, how='inner', left_on='id.videoId', right_
 
 #print(df_cd)
 
+# Prepares a different dataframe for videos tags, each in an independent row with their correspondant video id and video title
+id = list(df_cd['id'])
+snippet_title_y = list(df_cd['snippet.title_x'])
+snippet_tags = list(df_cd['snippet.tags'])
+
+kw_data= []
+
+for keywords in snippet_tags:
+    for kwd in keywords:
+        kw_data.append({'id' : id[snippet_tags.index(keywords)], 'title' : snippet_title_y[snippet_tags.index(keywords)], 'tag' : kwd})
+
+
+df_kw = pd.DataFrame(kw_data)
+
+
 
 # Outputs the merged data frames with the name of the channel as name of the file
 df_cd.to_csv('report_'+str(df_cd['snippet.channelTitle_x'][0]).replace(' ','_')+'.csv', index=False)
+# Outputs the video tags in individual rows with their correspondant video id and video title
+df_kw.to_csv('tags_'+str(df_cd['snippet.channelTitle_x'][0]).replace(' ','_')+'.csv')
 
