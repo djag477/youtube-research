@@ -43,6 +43,8 @@ video_details_response = video_details_request.execute()
 
 video_details_data = pd.json_normalize(video_details_response['items'])
 video_details_df = pd.DataFrame(video_details_data)
+# Creates a new column stripping the topic URL of everything but the actual topic name i.e.: [https://en.wikipedia.org/wiki/Society] --> ['Society']
+video_details_df['clean_topic_categories'] = [[ y[y.index("wiki/")+5:len(y)] for y in x] if not isinstance(x, float) else "" for x in video_details_df['topicDetails.topicCategories'] ]
 
 # Both data frames get merged on the ID of the video
 df_cd = pd.merge(df, video_details_df, how='inner', left_on='id.videoId', right_on='id').drop(columns=[
