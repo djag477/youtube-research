@@ -45,11 +45,21 @@ video_details_data = pd.json_normalize(video_details_response['items'])
 video_details_df = pd.DataFrame(video_details_data)
 
 # Both data frames get merged on the ID of the video
-df_cd = pd.merge(df, video_details_df, how='inner', left_on='id.videoId', right_on='id')
+df_cd = pd.merge(df, video_details_df, how='inner', left_on='id.videoId', right_on='id').drop(columns=[
+    'etag_x','snippet.description_x','snippet.thumbnails.default.width_x','snippet.thumbnails.default.height_x',
+    'snippet.thumbnails.medium.width_x','snippet.thumbnails.medium.height_x',
+    'snippet.thumbnails.high.width_x','snippet.thumbnails.high.height_x',
+    'id.channelId','etag_y','snippet.publishedAt_y','snippet.channelId_y',
+    'snippet.title_y','snippet.thumbnails.default.url_y','snippet.thumbnails.default.width_y',
+    'snippet.thumbnails.default.height_y','snippet.thumbnails.medium.url_y','snippet.thumbnails.medium.width_y',
+    'snippet.thumbnails.medium.height_y','snippet.thumbnails.high.url_y','snippet.thumbnails.high.width_y',
+    'snippet.thumbnails.high.height_y','snippet.thumbnails.standard.url','snippet.thumbnails.standard.width',
+    'snippet.thumbnails.standard.height','snippet.thumbnails.maxres.width','snippet.thumbnails.maxres.height',
+    'snippet.channelTitle_y','snippet.liveBroadcastContent_y'])
 
 #print(df_cd)
 
 
 # Outputs the merged data frames with the name of the channel as name of the file
-df_cd.to_csv('report_'+str(df_cd['snippet.channelTitle_x'][0]).replace(' ','_')+'.csv')
+df_cd.to_csv('report_'+str(df_cd['snippet.channelTitle_x'][0]).replace(' ','_')+'.csv', index=False)
 
