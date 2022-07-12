@@ -21,7 +21,7 @@ def get_pages(channel):
     )
     response = request.execute()
     videos = int(response['items'][0]['statistics']['videoCount']) # total number of videos
-    iterations = ceil(videos/50) # there's a limit of 500 videos for each search, so we need "pages" of 500 items
+    iterations = ceil(videos/50) # there's a limit of 50 videos for each search, so we need "pages" of 50 items
 
     print(f"Channel has: {videos} videos")
     print(f"Which means: {iterations} pages")
