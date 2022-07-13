@@ -1,0 +1,4 @@
+google_api_python_client==2.52.0
+pandas==1.4.3
+psycopg2==2.9.3
+XlsxWriter==3.0.3
