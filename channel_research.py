@@ -93,19 +93,42 @@ def extract_tags(id_list, video_title, tags):
     kw_data= []
 
     for keywords in snippet_tags:
-        for kwd in keywords:
-            kw_data.append({'id' : id[snippet_tags.index(keywords)], 'title' : snippet_title_y[snippet_tags.index(keywords)], 'tag' : kwd})
+        if isinstance(keywords, float):
+            kw_data.append({'id' : id[snippet_tags.index(keywords)], 'title' : snippet_title_y[snippet_tags.index(keywords)], 'tag' : "VIDEO HAS NO TAGS"})
+        else:
+            for kwd in keywords:
+                kw_data.append({'id' : id[snippet_tags.index(keywords)], 'title' : snippet_title_y[snippet_tags.index(keywords)], 'tag' : kwd})
 
     df_kw = pd.DataFrame(kw_data)
     return df_kw
 
 
+merged_helper = []
+tags_helper = []
+
 for i in range(get_pages(chanId)):
     df = make_report(date)
     video_ids = [x for x in df["id.videoId"] if not isinstance(x, float)]
     merged_report = merged_data(df, video_metrics())
-    merged_report.to_csv('report_'+str(merged_report['snippet.channelTitle_x'][0]).replace(' ','_')+f"{date}"+'.csv', index=False)
+    #merged_report.to_csv('report_'+str(merged_report['snippet.channelTitle_x'][0]).replace(' ','_')+f"{date}"+'.csv', index=False)
     df_kw = extract_tags(merged_report['id'], merged_report['snippet.title_x'], merged_report['snippet.tags'])
-    df_kw.to_csv('tags_'+str(merged_report['snippet.channelTitle_x'][0]).replace(' ','_')+f"{date}"+'.csv')
-    print("now this is the date", date)
+    #df_kw.to_csv('tags_'+str(merged_report['snippet.channelTitle_x'][0]).replace(' ','_')+f"{date}"+'.csv')
+    merged_helper.append(merged_report)
+    tags_helper.append(df_kw)
     date = df['snippet.publishTime'].min()
+
+
+final_merged = pd.concat(merged_helper, ignore_index=True)
+final_tags = pd.concat(tags_helper, ignore_index=True)
+
+
+# Create a Pandas Excel writer using XlsxWriter as the engine.
+writer = pd.ExcelWriter('report_'+str(merged_report['snippet.channelTitle_x'][0]).replace(' ','_')+'.xlsx', engine='xlsxwriter')
+
+# Write each dataframe to a different worksheet.
+final_merged.to_excel(writer, sheet_name='report')
+final_tags.to_excel(writer, sheet_name='tags')
+
+
+# Close the Pandas Excel writer and output the Excel file.
+writer.save()
